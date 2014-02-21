@@ -42,14 +42,14 @@ ext.installRequiredSdk = { compileSdkVersion, buildToolsVersion ->
     }
 }
 
-def buildComponents(sdkDir, compileSdkVersion, buildToolsVersion) {
+private def buildComponents(sdkDir, compileSdkVersion, buildToolsVersion) {
     def components = []
 
-    if (!file("${sdkDir}/platforms/android-${compileSdkVersion}").exists()) {
+    if (file("${sdkDir}/platforms/android-${compileSdkVersion}").exists()) {
         components.add("android-${compileSdkVersion}")
-        println "[platform] android${buildToolsVersion} is not installed"
+        println "[platform] android-${compileSdkVersion} is not installed"
     }
-    if (!file("${sdkDir}/build-tools/${buildToolsVersion}").exists()) {
+    if (file("${sdkDir}/build-tools/${buildToolsVersion}").exists()) {
         components.add("build-tools-${buildToolsVersion}")
         println "[build tools] build-tools-${buildToolsVersion} is not installed"
     }
@@ -57,7 +57,7 @@ def buildComponents(sdkDir, compileSdkVersion, buildToolsVersion) {
     return components
 }
 
-def runInstall(sdkDir, components) {
+private def runInstall(sdkDir, component) {
     def android = "$sdkDir/tools/android"
 
     def leftProc = "echo y".execute()
@@ -68,8 +68,12 @@ def runInstall(sdkDir, components) {
             "--no-ui",
             "-a",
             "--filter",
-            "${components}"].execute()
+            "${component}"].execute()
 
+    pipe(leftProc, rightProc)
+}
+
+private def pipe(leftProc, rightProc) {
     leftProc | rightProc
     rightProc.in.eachLine { line -> println line }
     rightProc.waitFor()
