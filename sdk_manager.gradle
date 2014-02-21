@@ -37,9 +37,11 @@ ext.installRequiredSdk = { compileSdkVersion, buildToolsVersion ->
         return
     }
 
-    buildComponents(sdkDir, compileSdkVersion, buildToolsVersion).each {
-        runInstall(sdkDir, it)
+    def workers = []
+    buildComponents(sdkDir, compileSdkVersion, buildToolsVersion).each { component ->
+        workers.add(Thread.start{ runInstall(sdkDir, component) })
     }
+    workers*.join()
 }
 
 private def buildComponents(sdkDir, compileSdkVersion, buildToolsVersion) {
