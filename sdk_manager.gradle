@@ -1,0 +1,76 @@
+ext.readSdkDir = {
+    def sdkDir = null
+    [
+            System.getenv("ANDROID_SDK"),
+            "/usr/local/opt/android-sdk", // brew --prefix android-sdk
+            "/Applications/Android Studio.app/sdk"
+    ].each { dir ->
+        if (dir != null && file(dir).exists()) {
+            sdkDir = dir
+        }
+    }
+    return sdkDir
+}
+
+ext.readNdkDir = {
+    def ndkDir = null
+    [
+            System.getenv("ANDROID_NDK"),
+            "/usr/local/opt/android-ndk", // brew --prefix android-ndk
+    ].each { dir ->
+        if (dir != null && file(dir).exists()) {
+            ndkDir = dir
+        }
+    }
+    return ndkDir
+}
+
+ext.installRequiredSdk = { compileSdkVersion, buildToolsVersion ->
+    if (compileSdkVersion == null || buildToolsVersion == null) {
+        throw new IllegalArgumentException("compileSdkVersion and buildToolsVersion must not be null")
+        return
+    }
+
+    def sdkDir = readSdkDir()
+    if (sdkDir == null) {
+        throw new GradleException("ANDROID_HOME/ANDROID_SDK does not exist")
+        return
+    }
+
+    buildComponents(sdkDir, compileSdkVersion, buildToolsVersion).each {
+        runInstall(sdkDir, it)
+    }
+}
+
+def buildComponents(sdkDir, compileSdkVersion, buildToolsVersion) {
+    def components = []
+
+    if (!file("${sdkDir}/platforms/android-${compileSdkVersion}").exists()) {
+        components.add("android-${compileSdkVersion}")
+        println "[platform] android${buildToolsVersion} is not installed"
+    }
+    if (!file("${sdkDir}/build-tools/${buildToolsVersion}").exists()) {
+        components.add("build-tools-${buildToolsVersion}")
+        println "[build tools] build-tools-${buildToolsVersion} is not installed"
+    }
+
+    return components
+}
+
+def runInstall(sdkDir, components) {
+    def android = "$sdkDir/tools/android"
+
+    def leftProc = "echo y".execute()
+    def rightProc = [
+            "${android}",
+            "update",
+            "sdk",
+            "--no-ui",
+            "-a",
+            "--filter",
+            "${components}"].execute()
+
+    leftProc | rightProc
+    rightProc.in.eachLine { line -> println line }
+    rightProc.waitFor()
+}
