@@ -1,6 +1,7 @@
 ext.readSdkDir = {
     def sdkDir = null
     [
+            System.getenv("ANDROID_HOME"),
             System.getenv("ANDROID_SDK"),
             "/usr/local/opt/android-sdk", // brew --prefix android-sdk
             "/Applications/Android Studio.app/sdk"
@@ -25,9 +26,13 @@ ext.readNdkDir = {
     return ndkDir
 }
 
-ext.installRequiredSdk = { compileSdkVersion, buildToolsVersion ->
-    if (compileSdkVersion == null || buildToolsVersion == null) {
-        throw new IllegalArgumentException("compileSdkVersion and buildToolsVersion must not be null")
+
+ext.installRequiredSdk = { appExtension ->
+    def compileSdkVersion = appExtension.compileSdkVersion
+    def buildToolsRevision = appExtension.buildToolsRevision
+
+    if (compileSdkVersion == null || buildToolsRevision == null) {
+        throw new IllegalArgumentException("compileSdkVersion and buildToolsRevision must not be null")
         return
     }
 
@@ -38,22 +43,24 @@ ext.installRequiredSdk = { compileSdkVersion, buildToolsVersion ->
     }
 
     def workers = []
-    buildComponents(sdkDir, compileSdkVersion, buildToolsVersion).each { component ->
+    buildComponents(sdkDir, compileSdkVersion, buildToolsRevision).each { component ->
         workers.add(Thread.start{ runInstall(sdkDir, component) })
     }
     workers*.join()
 }
 
-private def buildComponents(sdkDir, compileSdkVersion, buildToolsVersion) {
+private def buildComponents(sdkDir, compileSdkVersion, buildToolsRevision) {
     def components = []
 
-    if (file("${sdkDir}/platforms/android-${compileSdkVersion}").exists()) {
+    def platformDir = "${sdkDir}/platforms/${compileSdkVersion}"
+    if (!file(platformDir).exists()) {
         components.add("android-${compileSdkVersion}")
-        println "[platform] android-${compileSdkVersion} is not installed"
+        println "[platform] ${platformDir} is not installed"
     }
-    if (file("${sdkDir}/build-tools/${buildToolsVersion}").exists()) {
-        components.add("build-tools-${buildToolsVersion}")
-        println "[build tools] build-tools-${buildToolsVersion} is not installed"
+    def buildToolDir = "${sdkDir}/build-tools/${buildToolsRevision}"
+    if (!file(buildToolDir).exists()) {
+        components.add("build-tools-${buildToolsRevision}")
+        println "[build tools] ${buildToolDir} is not installed"
     }
 
     return components

@@ -17,10 +17,16 @@ readSdkDir()
 readNdkDir()
 ```
 
-- Install required platform and build tool
+- Install required platform and build tool if necessary
 
 ```
-installRequiredSdk(18, '19.0.1')
+android {
+    compileSdkVersion 18
+    buildToolsVersion '19.0.1'
+
+    installRequiredSdk(android)
+
+    ...
 ```
 
 

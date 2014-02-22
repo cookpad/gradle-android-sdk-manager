@@ -3,6 +3,8 @@ apply from: '../sdk_manager.gradle'
 task check
 
 check.dependsOn(task("installRequiredSdk") << {
-    installRequiredSdk(18, '19.0.1')
+    def prop = [:]
+    prop['compileSdkVersion'] = 'android-18'
+    prop['buildToolsRevision'] = '19.0.1'
+    installRequiredSdk(prop)
 })
-
