@@ -54,7 +54,7 @@ private def buildComponents(sdkDir, compileSdkVersion, buildToolsRevision) {
 
     def platformDir = "${sdkDir}/platforms/${compileSdkVersion}"
     if (!file(platformDir).exists()) {
-        components.add("android-${compileSdkVersion}")
+        components.add("${compileSdkVersion}")
         println "[platform] ${platformDir} is not installed"
     }
     def buildToolDir = "${sdkDir}/build-tools/${buildToolsRevision}"
