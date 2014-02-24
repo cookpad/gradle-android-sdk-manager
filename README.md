@@ -5,7 +5,7 @@ Helper to manage android sdk for gradle.
 ## Installation
 
 ```
-apply from: 'https://raw2.github.com/rejasupotaro/gradle-android-sdk-manager/master/sdk_manager.gradle'
+apply from: 'https://raw2.github.com/cookpad/gradle-android-sdk-manager/master/sdk_manager.gradle'
 ```
 
 ## Usage
