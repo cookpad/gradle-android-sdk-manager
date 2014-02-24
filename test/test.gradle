@@ -2,6 +2,14 @@ apply from: '../sdk_manager.gradle'
 
 task check
 
+check.dependsOn(task("readSdkDir") << {
+    println readSdkDir()
+})
+
+check.dependsOn(task("readNdkDir") << {
+    println readNdkDir()
+})
+
 check.dependsOn(task("installRequiredSdk") << {
     def prop = [:]
     prop['compileSdkVersion'] = 'android-18'
