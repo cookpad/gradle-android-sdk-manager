@@ -1,10 +1,10 @@
 ext.readSdkDir = {
     def sdkDir = null
     [
-            System.getenv("ANDROID_HOME"),
-            System.getenv("ANDROID_SDK"),
+            "/Applications/Android Studio.app/sdk",
             "/usr/local/opt/android-sdk", // brew --prefix android-sdk
-            "/Applications/Android Studio.app/sdk"
+            System.getenv("ANDROID_SDK"),
+            System.getenv("ANDROID_HOME"),
     ].each { dir ->
         if (dir != null && file(dir).exists()) {
             sdkDir = dir
@@ -16,8 +16,8 @@ ext.readSdkDir = {
 ext.readNdkDir = {
     def ndkDir = null
     [
-            System.getenv("ANDROID_NDK"),
             "/usr/local/opt/android-ndk", // brew --prefix android-ndk
+            System.getenv("ANDROID_NDK"),
     ].each { dir ->
         if (dir != null && file(dir).exists()) {
             ndkDir = dir
