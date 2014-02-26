@@ -1,5 +1,9 @@
 ext.readSdkDir = {
-    def sdkDir = null
+    def sdkDir = readLocalPropertiesValue("sdk.dir")
+    if (sdkDir) {
+        return sdkDir
+    }
+
     [
             "/Applications/Android Studio.app/sdk",
             "/usr/local/opt/android-sdk", // brew --prefix android-sdk
@@ -14,7 +18,11 @@ ext.readSdkDir = {
 }
 
 ext.readNdkDir = {
-    def ndkDir = null
+    def ndkDir = readLocalPropertiesValue("ndk.dir")
+    if (ndkDir) {
+        return ndkDir
+    }
+
     [
             "/usr/local/opt/android-ndk", // brew --prefix android-ndk
             System.getenv("ANDROID_NDK"),
@@ -26,6 +34,15 @@ ext.readNdkDir = {
     return ndkDir
 }
 
+private def readLocalPropertiesValue(key) {
+    if (!file("${project.rootDir}/local.properties").exists()) {
+        return null
+    }
+
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file("${project.rootDir}/local.properties").newDataInputStream())
+    return properties.getProperty(key)
+}
 
 ext.installRequiredSdk = { appExtension ->
     def compileSdkVersion = appExtension.compileSdkVersion
