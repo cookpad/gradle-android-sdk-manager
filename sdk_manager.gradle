@@ -34,7 +34,7 @@ ext.readNdkDir = {
     return ndkDir
 }
 
-private def readLocalPropertiesValue(key) {
+ext.readLocalPropertiesValue = { key ->
     if (!file("${project.rootDir}/local.properties").exists()) {
         return null
     }

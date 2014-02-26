@@ -10,6 +10,11 @@ check.dependsOn(task("readNdkDir") << {
     println readNdkDir()
 })
 
+check.dependsOn(task("readLocalPropertiesValue") << {
+    println readLocalPropertiesValue("sdk.dir")
+    println readLocalPropertiesValue("ndk.dir")
+})
+
 check.dependsOn(task("installRequiredSdk") << {
     def prop = [:]
     prop['compileSdkVersion'] = 'android-18'
