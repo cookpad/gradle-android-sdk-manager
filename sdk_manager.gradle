@@ -1,5 +1,9 @@
-ext.readSdkDir = {
-    def sdkDir = null
+ext.guessSdkDir = {
+    def sdkDir = readLocalPropertiesValue("sdk.dir")
+    if (sdkDir) {
+        return sdkDir
+    }
+
     [
             "/Applications/Android Studio.app/sdk",
             "/usr/local/opt/android-sdk", // brew --prefix android-sdk
@@ -13,8 +17,12 @@ ext.readSdkDir = {
     return sdkDir
 }
 
-ext.readNdkDir = {
-    def ndkDir = null
+ext.guessNdkDir = {
+    def ndkDir = readLocalPropertiesValue("ndk.dir")
+    if (ndkDir) {
+        return ndkDir
+    }
+
     [
             "/usr/local/opt/android-ndk", // brew --prefix android-ndk
             System.getenv("ANDROID_NDK"),
@@ -26,20 +34,26 @@ ext.readNdkDir = {
     return ndkDir
 }
 
+ext.readLocalPropertiesValue = { key ->
+    if (!project.file("local.properties").exists()) {
+        throw new GradleException("local.properties does not exist")
+    }
 
-ext.installRequiredSdk = { appExtension ->
+    Properties properties = new Properties()
+    properties.load(project.file("local.properties").newDataInputStream())
+    return properties.getProperty(key)
+}
+
+ext.installRequiredSdk = { appExtension, sdkDir=readLocalPropertiesValue("sdk.dir") ->
     def compileSdkVersion = appExtension.compileSdkVersion
     def buildToolsRevision = appExtension.buildToolsRevision
 
     if (compileSdkVersion == null || buildToolsRevision == null) {
         throw new IllegalArgumentException("compileSdkVersion and buildToolsRevision must not be null")
-        return
     }
 
-    def sdkDir = readSdkDir()
     if (sdkDir == null) {
-        throw new GradleException("ANDROID_HOME/ANDROID_SDK does not exist")
-        return
+        throw new GradleException("sdkDir does not exist")
     }
 
     def workers = []

@@ -2,12 +2,17 @@ apply from: '../sdk_manager.gradle'
 
 task check
 
-check.dependsOn(task("readSdkDir") << {
-    println readSdkDir()
+check.dependsOn(task("guessSdkDir") << {
+    println guessSdkDir()
 })
 
-check.dependsOn(task("readNdkDir") << {
-    println readNdkDir()
+check.dependsOn(task("guessNdkDir") << {
+    println guessNdkDir()
+})
+
+check.dependsOn(task("readLocalPropertiesValue") << {
+    println readLocalPropertiesValue("sdk.dir")
+    println readLocalPropertiesValue("ndk.dir")
 })
 
 check.dependsOn(task("installRequiredSdk") << {
@@ -15,4 +20,5 @@ check.dependsOn(task("installRequiredSdk") << {
     prop['compileSdkVersion'] = 'android-18'
     prop['buildToolsRevision'] = '19.0.1'
     installRequiredSdk(prop)
+    installRequiredSdk(prop, "/Applications/Android Studio.app/sdk")
 })
