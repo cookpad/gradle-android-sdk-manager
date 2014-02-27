@@ -1,6 +1,6 @@
 # gradle-android-sdk-manager
 
-Helper to manage android sdk for gradle.
+This plugin manages Android SDK and build tools for gradle.
 
 ## Installation
 
@@ -10,21 +10,21 @@ apply from: 'https://raw2.github.com/cookpad/gradle-android-sdk-manager/master/s
 
 ## Usage
 
-### Read value from local.properties
+### Read SDK path from local.properties
 
 ```groovy
 readLocalPropertiesValue("sdk.dir") // => /usr/local/opt/android-sdk
 readLocalPropertiesValue("ndk.dir") // => /usr/local/opt/android-ndk
 ```
 
-### Read sdk or ndk dir
+### Find SDK or NDK dir
 
 ```groovy
-readSdkDir()
-readNdkDir()
+guessSdkDir()
+guessNdkDir()
 ```
 
-Priority order of reading is as below
+Find the following paths for a SDK directory in the following order:
 
 * local.properties
 * System.getenv("ANDROID_HOME")
@@ -32,21 +32,24 @@ Priority order of reading is as below
 * "/usr/local/opt/android-sdk" // brew --prefix android-sdk
 * "/Applications/Android Studio.app/sdk"
 
-### Install required platform and build tool if necessary
+### Install required SDK and build tools if necessary
+
+`android(1)` has a headless mode to install android development tools from terminals.
+`installRequiredSdk()` installs build tools with specified versions declared in `build.gradle`.
 
 ```groovy
 android {
     compileSdkVersion 18
     buildToolsVersion '19.0.1'
 
-    // use "sdk.dir" value from local.properties
+    // installs Android SDK 18 and build tools 19.0.1
+    // with "sdk.dir" value from local.properties
     installRequiredSdk(android)
-    // or you can pass the sdk dir expressly
+    // or you can pass the sdk dir explicitly
     installRequiredSdk(android, "/Applications/Android Studio.app/sdk")
 
     ...
 ```
-
 
 ## Contributing
 
