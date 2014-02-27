@@ -2,12 +2,12 @@ apply from: '../sdk_manager.gradle'
 
 task check
 
-check.dependsOn(task("readSdkDir") << {
-    println readSdkDir()
+check.dependsOn(task("guessSdkDir") << {
+    println guessSdkDir()
 })
 
-check.dependsOn(task("readNdkDir") << {
-    println readNdkDir()
+check.dependsOn(task("guessNdkDir") << {
+    println guessNdkDir()
 })
 
 check.dependsOn(task("readLocalPropertiesValue") << {

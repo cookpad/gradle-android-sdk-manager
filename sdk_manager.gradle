@@ -1,4 +1,4 @@
-ext.readSdkDir = {
+ext.guessSdkDir = {
     def sdkDir = readLocalPropertiesValue("sdk.dir")
     if (sdkDir) {
         return sdkDir
@@ -17,7 +17,7 @@ ext.readSdkDir = {
     return sdkDir
 }
 
-ext.readNdkDir = {
+ext.guessNdkDir = {
     def ndkDir = readLocalPropertiesValue("ndk.dir")
     if (ndkDir) {
         return ndkDir
