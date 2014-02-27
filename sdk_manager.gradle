@@ -36,7 +36,7 @@ ext.readNdkDir = {
 
 ext.readLocalPropertiesValue = { key ->
     if (!project.file("local.properties").exists()) {
-        return null
+        throw new GradleException("local.properties does not exist")
     }
 
     Properties properties = new Properties()
@@ -44,19 +44,16 @@ ext.readLocalPropertiesValue = { key ->
     return properties.getProperty(key)
 }
 
-ext.installRequiredSdk = { appExtension ->
+ext.installRequiredSdk = { appExtension, sdkDir=readLocalPropertiesValue("sdk.dir") ->
     def compileSdkVersion = appExtension.compileSdkVersion
     def buildToolsRevision = appExtension.buildToolsRevision
 
     if (compileSdkVersion == null || buildToolsRevision == null) {
         throw new IllegalArgumentException("compileSdkVersion and buildToolsRevision must not be null")
-        return
     }
 
-    def sdkDir = readSdkDir()
     if (sdkDir == null) {
-        throw new GradleException("ANDROID_HOME/ANDROID_SDK does not exist")
-        return
+        throw new GradleException("sdkDir does not exist")
     }
 
     def workers = []

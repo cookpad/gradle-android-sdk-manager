@@ -20,4 +20,5 @@ check.dependsOn(task("installRequiredSdk") << {
     prop['compileSdkVersion'] = 'android-18'
     prop['buildToolsRevision'] = '19.0.1'
     installRequiredSdk(prop)
+    installRequiredSdk(prop, "/Applications/Android Studio.app/sdk")
 })
