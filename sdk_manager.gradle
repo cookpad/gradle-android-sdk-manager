@@ -36,7 +36,7 @@ ext.guessNdkDir = {
 
 ext.readLocalPropertiesValue = { key ->
     if (!project.file("local.properties").exists()) {
-        throw new GradleException("local.properties does not exist")
+        return ""
     }
 
     Properties properties = new Properties()
@@ -52,7 +52,7 @@ ext.installRequiredSdk = { appExtension, sdkDir=readLocalPropertiesValue("sdk.di
         throw new IllegalArgumentException("compileSdkVersion and buildToolsRevision must not be null")
     }
 
-    if (sdkDir == null) {
+    if (!(sdkDir)) {
         throw new GradleException("sdkDir does not exist")
     }
 
