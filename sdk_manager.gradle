@@ -57,8 +57,9 @@ ext.installRequiredSdk = { appExtension, sdkDir=readLocalPropertiesValue("sdk.di
     }
 
     def workers = []
+    def sdkToolsAndroidExecFilePath = findSdkToolsAndroidExecFile(sdkDir)
     buildComponents(sdkDir, compileSdkVersion, buildToolsRevision).each { component ->
-        workers.add(Thread.start{ runInstall(sdkDir, component) })
+        workers.add(Thread.start{ runInstall(sdkToolsAndroidExecFilePath, component) })
     }
     workers*.join()
 }
@@ -80,12 +81,10 @@ private def buildComponents(sdkDir, compileSdkVersion, buildToolsRevision) {
     return components
 }
 
-private def runInstall(sdkDir, component) {
-    def android = "$sdkDir/tools/android"
-
+private def runInstall(String sdkToolsAndroidExecFilePath, component) {
     def leftProc = "echo y".execute()
     def rightProc = [
-            "${android}",
+            sdkToolsAndroidExecFilePath,
             "update",
             "sdk",
             "--no-ui",
@@ -100,4 +99,16 @@ private def pipe(leftProc, rightProc) {
     leftProc | rightProc
     rightProc.in.eachLine { line -> println line }
     rightProc.waitFor()
+}
+
+private String findSdkToolsAndroidExecFile(String sdkDir) {
+    // "android" for Linux and OS X, "android.bat" for Windows
+    def fileNameCandidates = ["android", "android.bat"]
+    for (def fileName : fileNameCandidates) {
+        def candidateFilePath = "${sdkDir}/tools/${fileName}"
+        if (file(candidateFilePath).exists()) {
+            return candidateFilePath
+        }
+    }
+    throw new RuntimeException("Executable file `android` not found")
 }
