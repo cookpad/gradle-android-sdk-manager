@@ -1,3 +1,5 @@
+**This library is no longer maintained. Use https://github.com/JakeWharton/sdk-manager-plugin instead.**
+
 # gradle-android-sdk-manager
 
 This plugin manages Android SDK and build tools for gradle.
