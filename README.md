@@ -7,7 +7,7 @@ This plugin manages Android SDK and build tools for gradle.
 ## Installation
 
 ```groovy
-apply from: 'https://raw2.github.com/cookpad/gradle-android-sdk-manager/master/sdk_manager.gradle'
+apply from: 'https://raw.githubusercontent.com/cookpad/gradle-android-sdk-manager/master/sdk_manager.gradle'
 ```
 
 ## Usage
